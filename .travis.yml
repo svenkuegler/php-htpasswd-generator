@@ -24,3 +24,8 @@ script: phpunit --coverage-text
 
 notifications:
   email: false
+
+  
+addons:
+  code_climate:
+    repo_token: 356c3e482b7860030a8db4df0c2512030da22c4d1f145e7ff140ad287764d13f
