@@ -51,7 +51,7 @@ class HtpasswdGenerator {
      */
     public function add($username, $password) {
         $this->loadFile();
-        $this->getUsers()[$this->cleanUp($username)] = $this->cryptApr1Md5($password);
+        $this->setUser($this->cleanUp($username), $this->cryptApr1Md5($password));
         $this->saveFile();
         return $this;
     }
@@ -161,7 +161,7 @@ class HtpasswdGenerator {
             if(is_readable($this->htpasswdFile)) {
                 foreach(file($this->htpasswdFile) as $row) {
                     $e = explode(":", $row);
-                    $this->setUser(users[$e[0]], preg_replace("#\r\n#", "", $e[1]));
+                    $this->setUser($e[0], preg_replace("#\r\n#", "", $e[1]));
                 }
             } else {
                 $this->addMessage(_("File is not readable"));
