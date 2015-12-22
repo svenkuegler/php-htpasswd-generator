@@ -1,0 +1,7 @@
+AuthType Basic
+AuthName "Access to secure folder"
+AuthUserFile d:/Projekte/php-htpasswd-generator/examples/secure/.htpasswd
+Require valid-user
+
+ErrorDocument 401     /examples/error/unauthorized.html
+ErrorDocument 404     /examples/error/not-found.html
