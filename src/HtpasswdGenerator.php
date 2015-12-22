@@ -31,7 +31,7 @@ class HtpasswdGenerator {
     
     /**
      * Construct
-     * @param string|null $config
+     * @param string|null $htpasswdFile
      */
     function __construct($htpasswdFile=null) {
         if(!is_null($htpasswdFile)) {
@@ -51,7 +51,7 @@ class HtpasswdGenerator {
      */
     public function add($username, $password) {
         $this->loadFile();
-        $this->users[$this->cleanUp($username)] = $this->cryptApr1Md5($password);
+        $this->getUsers()[$this->cleanUp($username)] = $this->cryptApr1Md5($password);
         $this->saveFile();
         return $this;
     }
@@ -63,12 +63,12 @@ class HtpasswdGenerator {
      */
     public function delete($username) {
         $this->loadFile();
-        if(array_key_exists($this->cleanUp($username), $this->users)) {
-            $oldusers = $this->users;
+        if(array_key_exists($this->cleanUp($username), $this->getUsers())) {
+            $oldusers = $this->getUsers();
             $this->users = array();
             foreach ($oldusers as $user => $passwd) {
                 if($user != $this->cleanUp($username)) {
-                    $this->users[$user] = $passwd;
+                    $this->setUser($user, $passwd);
                 }
             }
             $this->saveFile();
@@ -89,7 +89,7 @@ class HtpasswdGenerator {
     public function isValid($username, $password) {
         $this->loadFile();
         
-        foreach ($this->users as $user => $passwd) {
+        foreach ($this->getUsers() as $user => $passwd) {
             if($user == $this->cleanUp($username)) {
                 if($passwd == $this->cryptApr1Md5($password, $passwd)) {
                     return true;
@@ -102,6 +102,38 @@ class HtpasswdGenerator {
         return false;
     }
     
+    /**
+     * Getter for Users Array
+     * 
+     * @return array
+     */
+    public function getUsers() {
+        return $this->users;
+    }
+    
+    /**
+     * Setter for Users Array
+     * 
+     * @param string $username
+     * @param string $password
+     * @return array
+     */
+    public function setUser($username, $password) {
+        $this->users[$username] = $password;
+        return $this->users;
+    }
+    
+    /**
+     * Clear Users Array
+     * 
+     * @return array
+     */
+    public function clearUsers() {
+        $this->users = array();
+        return $this->users;
+    }
+
+
     /** ************** private ******************************** */
    
     
@@ -129,7 +161,7 @@ class HtpasswdGenerator {
             if(is_readable($this->htpasswdFile)) {
                 foreach(file($this->htpasswdFile) as $row) {
                     $e = explode(":", $row);
-                    $this->users[$e[0]] = preg_replace("#\r\n#", "", $e[1]);
+                    $this->setUser(users[$e[0]], preg_replace("#\r\n#", "", $e[1]));
                 }
             } else {
                 $this->addMessage(_("File is not readable"));
@@ -144,7 +176,7 @@ class HtpasswdGenerator {
     private function saveFile() {
         $result = "";
         if((file_exists($this->htpasswdFile) && is_writeable($this->htpasswdFile)) || !file_exists($this->htpasswdFile)) {
-            foreach ($this->users as $username => $password) {
+            foreach ($this->getUsers() as $username => $password) {
                 $result .= $username . ":" . $password . "\r\n";
             }
             file_put_contents($this->htpasswdFile, $result);
