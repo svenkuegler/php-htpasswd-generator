@@ -17,8 +17,8 @@ before_script:
 install: travis_retry composer install --no-interaction --prefer-source
 
 script: 
-    - bin/phpunit --coverage-clover=build/logs/clover.xml
-    - bin/phpspec run
+    - phpunit --coverage-clover=build/logs/clover.xml
+    - phpspec run
 
 after_script:
   - CODECLIMATE_REPO_TOKEN=356c3e482b7860030a8db4df0c2512030da22c4d1f145e7ff140ad287764d13f ./vendor/bin/test-reporter --stdout > codeclimate.json
