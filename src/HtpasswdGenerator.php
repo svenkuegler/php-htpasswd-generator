@@ -93,8 +93,6 @@ class HtpasswdGenerator {
             if($user == $this->cleanUp($username)) {
                 if($passwd == $this->cryptApr1Md5($password, $passwd)) {
                     return true;
-                } else {
-                    return false;
                 }
             }
         }
